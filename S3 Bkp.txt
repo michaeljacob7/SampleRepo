@@ -1,0 +1,35 @@
+Goto IAM
+Click on Users
+Add User
+{give username
+select AWS credential type: Programmatic access
+choose custom password
+set permission Attach 'AmazonS3FullAccess'
+add tag
+review and create user}
+
+Login to CLI
+ssh -i .\Key.pem ec2-user@3.111.246.150
+{ yum install mariadb 
+
+cd ~ 
+cd /home/backups
+vi /home/db_backup.sh
+
+{{
+#!/bin/sh
+
+echo "starting db backup"
+day="$(date +'%Y-%m-%d_%H:%M:%S')"
+db_backup="mydb_${day}.sql"
+sudo mysqldump  -udbuser -pdbpass --no-tablespaces dbname  >/home/backups${db_backup}
+echo "db backup complete"
+}}
+chmod +x /home/db_backup.sh
+/home/db_backup.sh
+aws configure
+{Access key ID
+Secret access key
+Region}
+aws s3 ls
+aws s3 cp mydb_2022-03-29_06:49:49.sql s3://mybucket221122
